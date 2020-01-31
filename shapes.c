@@ -1,33 +1,32 @@
-/*
- * shapes.c
- *
- *  Created on: Jan 31, 2020
- *      Author: eslamelnaggar
- */
+/************************************************************************************************************************
+ *  [FILE NAME]   :      <shapes.c>                                                                                     *
+ *  [AUTHOR]      :      <Eslam EL-Naggar>                                                                              *
+ *  [DATE CREATED]:      <JAN 26, 2020>                                                                                 *
+ *  [Description} :      <source files contains the functions definitions related to the shapse>                        *
+ ************************************************************************************************************************/
 
 /*------------------------------------------------------INCLUDES-------------------------------------------------------*/
 #include "shapes.h"
-
 
 /*----------------------------------------------------------------------------------------------------
  [Function Name]:  DrawShape
  [Description]  :  This function is responsible for drawing the shape at the top of the game zone
  [Args]         :  uint8 *shape_Ptr
- this argument shall contains the address of the array of the shapes formation
- uint8 * rowIndicator_Ptr
- this argument shall contains the address of the rowIndicator variable
- uint8 * upperPageIndicator_Ptr
- this argument shall contains the address of the upperPageIndicator variable
- uint8 * lowerPageIndicator_Ptr
- this argument shall contains the address of the lowerPageIndicator variable
- uint8 * columnIndicator_Ptr
- this argument shall contains the address of the columnIndicator variable
- uint8 * nextShapeFlag_Ptr
- this argument shall contains the address of the nextShapeFlag variable
- uint8 * lowerState_Ptr
- this argument shall contains the address of the array of lower page state of columns
- uint8 * upperState_Ptr
- this argument shall contains the address of the array of upper page state of columns
+ 	 	 	 	 	 	 this argument shall contains the address of the array of the shapes formation
+                   uint8 * rowIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the rowIndicator variable
+                   uint8 * upperPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the upperPageIndicator variable
+                   uint8 * lowerPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the lowerPageIndicator variable
+                   uint8 * columnIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the columnIndicator variable
+                   uint8 * nextShapeFlag_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the nextShapeFlag variable
+                   uint8 * lowerState_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the array of lower page state of columns
+ 	 	 	 	   uint8 * upperState_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the array of upper page state of columns
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 
@@ -160,19 +159,19 @@ void DrawShape(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
  [Function Name]:  EraseShape
  [Description]  :  This function is responsible for drawing the shape at the top of the game zone
  [Args]         :  uint8 *shape_Ptr
- this argument shall contains the address of the array of the shapes formation
- uint8 * rowIndicator_Ptr
- this argument shall contains the address of the rowIndicator variable
- uint8 * upperPageIndicator_Ptr
- this argument shall contains the address of the upperPageIndicator variable
- uint8 * lowerPageIndicator_Ptr
- this argument shall contains the address of the lowerPageIndicator variable
- uint8 * columnIndicator_Ptr
- this argument shall contains the address of the columnIndicator variable
- uint8 * lowerState_Ptr
- this argument shall contains the address of the array of lower page state of columns
- uint8 * upperState_Ptr
- this argument shall contains the address of the array of upper page state of columns
+ 	 	 	 	 	 	 this argument shall contains the address of the array of the shapes formation
+ 	 	 	 	   uint8 * rowIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the rowIndicator variable
+                   uint8 * upperPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the upperPageIndicator variable
+                   uint8 * lowerPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the lowerPageIndicator variable
+                   uint8 * columnIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the columnIndicator variable
+                   uint8 * lowerState_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the array of lower page state of columns
+                   uint8 * upperState_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the array of upper page state of columns
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 
@@ -227,15 +226,15 @@ void EraseShape(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
  [Function Name]:  GenerateLocation
  [Description]  :  This function is responsible for drawing the shape at the top of the game zone
  [Args]         :  uint8 *shape_Ptr
- this argument shall contains the address of the array of the shapes formation
- uint8 * rowIndicator_Ptr
- this argument shall contains the address of the rowIndicator variable
- uint8 * upperPageIndicator_Ptr
- this argument shall contains the address of the upperPageIndicator variable
- uint8 * lowerPageIndicator_Ptr
- this argument shall contains the address of the lowerPageIndicator variable
- uint8 * columnIndicator_Ptr
- this argument shall conatins the address of the columnIndicator variable
+ 	 	 	 	 	 	 this argument shall contains the address of the array of the shapes formation
+ 	 	 	 	   uint8 * rowIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the rowIndicator variable
+                   uint8 * upperPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the upperPageIndicator variable
+                   uint8 * lowerPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the lowerPageIndicator variable
+                   uint8 * columnIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall conatins the address of the columnIndicator variable
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 
@@ -245,7 +244,7 @@ void GenerateLocation(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
 	cli();
 
 	/* row numbers will be 1,3,5,7 */
-	(*rowIndicator_Ptr) = (*rowIndicator_Ptr) + 2;
+	(*rowIndicator_Ptr) = (*rowIndicator_Ptr) + TWO;
 
 	/* check if the row number is out of range
 	 * if yes, we have to increment the pages number
@@ -264,19 +263,20 @@ void GenerateLocation(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
 	 *  so, we have to start again with new shape
 	 */
 	if ((*rowIndicator_Ptr == SEVEN) && (*upperPageIndicator_Ptr == SEVEN)
-			&& (*lowerPageIndicator_Ptr == EIGHTH)) {
+			&& (*lowerPageIndicator_Ptr == EIGHT)) {
+		completeCheck(rowIndicator_Ptr, (uint8) (*upperPageIndicator_Ptr));
 		*upperPageIndicator_Ptr = STARTED_UPPER_PAGE;
 		*lowerPageIndicator_Ptr = STARTED_LOWER_PAGE;
 		*rowIndicator_Ptr = STARTED_ROW;
-		(*shape_Ptr)++;
 		(*columnIndicator_Ptr) = STARTED_COLUMN;
-		NextShapeView(&shape);
+		*shape_Ptr = nextShape;
+		nextShape = NextShapeView(&shape);
+
 		if ((*shape_Ptr) == NUM_SHAPES) {
 			(*shape_Ptr) = ZERO;
 		}
 
 	}
-
 
 	sei();
 }
@@ -287,6 +287,7 @@ void GenerateLocation(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 void RotateShape(uint8 *columnIndicator_Ptr) {
+
 	switch (shape) {
 	case FIRST_SHAPE:
 		shape = SECOND_SHAPE;
@@ -325,34 +326,35 @@ void RotateShape(uint8 *columnIndicator_Ptr) {
  [Description]  :  This function is responsible for drawing the next shape
  [Args]         :  uint8 * shape_Ptr
  this argument shall contains the address of the next shape
- [Returns]      :  This function returns void
+ [Returns]      :  This function returns value of the next shape
  ----------------------------------------------------------------------------------------------------*/
 
-void NextShapeView(uint8 *shape_Ptr) {
+uint8 NextShapeView(uint8 *shape_Ptr) {
 	uint8 loopCounter = ZERO;
-	uint8 shape = ZERO;
+	static uint8 shapeNext = ZERO;
 	GLCD_CTRL_PORT |= (ONE << CS2); /* Select Left half of display */
 	GLCD_CTRL_PORT &= ~(ONE << CS1);
 	GLCD_sendCommand(COLUMN_SETTING_ADDRESS + SHAPE_OUTPUT_ADDRESS); /* Set column address) */
 	GLCD_sendCommand(PAGE_SETTING_ADDRESS + PAGE_2); /* Set page address */
 
 	if ((*shape_Ptr) + ONE == NUM_SHAPES) {
-		shape = FIRST_SHAPE;
+		shapeNext = FIRST_SHAPE;
 	} else {
-		shape = (*shape_Ptr) + ONE;
+		shapeNext = (*shape_Ptr) + ONE;
 	}
 	/* displaying the current shape */
 	for (loopCounter = ZERO; loopCounter < SHAPE_WIDTH; loopCounter++) {
-		GLCD_sendData(shapes[(shape)][loopCounter]);
+		GLCD_sendData(shapes[(shapeNext)][loopCounter]);
 	}
+	return shapeNext;
 }
 
 /*----------------------------------------------------------------------------------------------------
  [Function Name]:  checkAfterMoving
  [Description]  :  This function is responsible for checking and adjusting
- the correct number of columns of each shape
+ t						the correct number of columns of each shape
  [Args]         :  uint8 *columnIndicator_Ptr
- this argument shall contains the address of the columnIndicator variable
+ 	 	 	 	 	 	this argument shall contains the address of the columnIndicator variable
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 
@@ -376,15 +378,6 @@ void checkAfterMoving(uint8 *columnIndicator_Ptr) {
 			*columnIndicator_Ptr = LEFT_MARGIN_ALL_SHAPES;
 		}
 		break;
-	case FIRST_SHAPE:
-	case SECOND_SHAPE:
-		if (*columnIndicator_Ptr > RIGHT_MARGIN_FIRST_SECOND_SHAPE) {
-			*columnIndicator_Ptr = RIGHT_MARGIN_FIRST_SECOND_SHAPE;
-		}
-		if (*columnIndicator_Ptr < LEFT_MARGIN_ALL_SHAPES) {
-			*columnIndicator_Ptr = LEFT_MARGIN_ALL_SHAPES;
-		}
-		break;
 
 	case SIXTH_SHAPE:
 	case SEVENTH_SHAPE:
@@ -395,6 +388,8 @@ void checkAfterMoving(uint8 *columnIndicator_Ptr) {
 			*columnIndicator_Ptr = LEFT_MARGIN_ALL_SHAPES;
 		}
 		break;
+	case FIRST_SHAPE:
+	case SECOND_SHAPE:
 	case FIFTH_SHAPE:
 	case EIGHTH_SHAPE:
 	case NINGTH_SHAPE:

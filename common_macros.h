@@ -2,7 +2,7 @@
  *  [FILE NAME]   :      <common_macros.h>                                                             *
  *  [AUTHOR]      :      <Eslam EL-Naggar>                                                             *
  *  [DATE CREATED]:      <Oct 4, 2019>                                                                 *
- *  [Description} :      <header file contain common  macros that used frequently>                     *
+ *  [Description] :      <header file contain common  macros that used frequently>                     *
  ******************************************************************************************************/
 #ifndef COMMON_MACROS_H_
 #define COMMON_MACROS_H_
@@ -27,6 +27,5 @@
 
 /* Check if a specific bit is cleared in any register and return true if yes */
 #define BIT_IS_CLEAR(REG,BIT) ( !(REG & (1<<BIT)) )
-
 
 #endif /* COMMON_MACROS_H_ */

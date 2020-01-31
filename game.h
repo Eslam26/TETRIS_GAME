@@ -8,7 +8,6 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-
 /*---------------------------------------------------INCLUDES------------------------------------------------------------*/
 #include "micro_config.h"
 #include "glcd.h"
@@ -48,20 +47,20 @@
 #define NUM_BITS_IN_BYTE 8
 #define HIGH_8BITS 0xFF
 #define ONE_SECOND 1000
+#define LAST_ROW_IN_PAGE 7
 
 #define ROW_TRANSFORM ON
 
-
 /*-------------------------------------------------FUNCTIONS PROTOTYPES---------------------------------------------------*/
-
 
 uint8 checkUpper(uint8 state, uint8 rowIndicator);
 uint8 checkLower(uint8 state, uint8 rowIndicator);
 void LosingFunction(void);
-void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
-		uint8 columnIndicator);
+void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator);
+void completeCheck(uint8 *rowIndicator_Ptr, uint8 *lowerPageIndicator_Ptr);
 /*-----------------------------------------------EXTERNAL VARIABLES------------------------------------------------------*/
 extern uint8 loseFlag;
 extern uint8 shape;
+extern uint8 nextShape;
 
 #endif /* GAME_H_ */

@@ -9,7 +9,7 @@
 
 #include "game.h"
 
-/*------------------------------------------------FUNCTIONS_DECLARATIONS------------------------------------------------*/
+/*--------------------------------------------FUNCTIONS_DECLARATIONS-----------------------------------------------------*/
 static void Setting_Interrupts(void);
 static void GameInit(void);
 static void GameIntiate(uint8 gamePlay, uint8 *shape_Ptr);
@@ -17,15 +17,14 @@ static void MoveRightCallBackFunction(void);
 static void MoveLeftCallBackFunction(void);
 static void RotateShapeCallBackFunction(void);
 
-
-/*---------------------------------------------GLOBAL VARIABLES---------------------------------------------------------*/
+/*-----------------------------------------------GLOBAL VARIABLES---------------------------------------------------------*/
 /* initialize the global variables */
 uint8 moveLeftFlag = ZERO; /* this variable is set to one when user wants to move the shape to the left  */
 uint8 moveRightFlag = ZERO; /* this variable is set to one when user wants to move the shape to the right */
 uint8 loseFlag = ZERO; /* this variable is set to one when user loses the game                       */
 uint8 shape = STARTED_SHAPE; /* this variable holds the current shape number                               */
 uint8 rotateShapeFlag = ZERO; /* this variable is set to one when user wants to rotate the shape            */
-uint8 score = ZERO;
+uint8 nextShape = ZERO; /* this variable holds the value of the next shape */
 
 /*----------------------------------------------------------------------------------------------------
  [Function Name]:  main
@@ -69,14 +68,16 @@ int main() {
 				DrawShape(&shape, &prevRow, &prevColumn, &prevLowerPage,
 						&prevUpperPage, &nextShapeFlag, lowerState, upperState);
 				/* switch to the next shape */
-				shape++;
+				completeCheck(&rowIndicator, &upperPageIndicator);
+
+				shape = nextShape;
+				/* displaying the next shape on the screen */
+				nextShape = NextShapeView(&shape);
 
 				/* check if it is the last shape or not */
 				if ((shape) == NUM_SHAPES) {
 					(shape) = ZERO; /* let the current shape is the first shape */
 				}
-				/* displaying the next shape on the screen */
-				NextShapeView(&shape);
 
 				/* setting the location of the current shape to start from the top */
 				rowIndicator = STARTED_ROW;
@@ -147,6 +148,7 @@ int main() {
 				}
 				/* checks if the user presses the rotate button or not */
 				if (rotateShapeFlag == ONE) {
+
 					rotateShapeFlag = ZERO;
 					/* rotates the shape */
 					RotateShape(&columnIndicator);
@@ -195,7 +197,7 @@ static void Setting_Interrupts(void) {
 /*----------------------------------------------------------------------------------------------------
  [Function Name]:  GameIntiate
  [Description]  :  This function is responsible for initiating the game and displaying the main borders
- of the game.
+ 	 	 	 	 	 	 of the game.
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 
@@ -208,7 +210,7 @@ static void GameIntiate(uint8 gamePlay, uint8 *shape_Ptr) {
 	GLCD_CTRL_PORT |= (ONE << CS2); /* Select Left half of display */
 	GLCD_CTRL_PORT &= ~(ONE << CS1);
 	GLCD_displayString(PAGE_1, "              ->Shape:");
-	NextShapeView(shape_Ptr); /* displaying the next shape */
+	nextShape = NextShapeView(shape_Ptr); /* displaying the next shape */
 
 	/* generating border of the game */
 	GLCD_CTRL_PORT |= (ONE << CS1); /* Select Right half of display */
@@ -273,8 +275,6 @@ static void RotateShapeCallBackFunction(void) {
 	rotateShapeFlag = ONE;
 }
 
-
-
 /*----------------------------------------------------------------------------------------------------
  [Function Name]:  checkUpper
  [Description]  :  This function is responsible for returning the masking part of the state column
@@ -294,19 +294,95 @@ uint8 checkLower(uint8 state, uint8 rowIndicator) {
 }
 
 /*----------------------------------------------------------------------------------------------------
+ [Function Name]:  completeCheck
+ [Description]  :  This function is responsible for checking
+ 	 	 	 	 	 	 the completion of the row or page according the configuration of ROW_TRANSFER
+ 	 	 	 	 	 	 (ROW_TRANSFER) is defined as ON, function will check on Row Completition
+ 	 	 	 	 	 	 (ROW_TRANSFER) is defined as OFF, function will check on Page completition
+
+ [Args]         :  uint8 * rowIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the rowIndicator variable
+ 	 	 	 	   uint8 * upperPageIndicator_Ptr
+ 	 	 	 	 	 	 this argument shall contains the address of the upperPageIndicator variable
+
+ [Returns]      :  This function returns void
+ ----------------------------------------------------------------------------------------------------*/
+void completeCheck(uint8 *rowIndicator_Ptr, uint8 *upperPageIndicator_Ptr) {
+#if ROW_TRANSFORM == OFF
+	uint8 loopCounter = ZERO;
+	uint8 state = ZERO;
+	uint8 counter = ZERO;
+	/* set the page address */
+	GLCD_sendCommand(PAGE_SETTING_ADDRESS + *upperPageIndicator_Ptr);
+
+	/* set the column address */
+	GLCD_sendCommand(
+	COLUMN_SETTING_ADDRESS + LEFT_BORDER + ONE);
+	for (loopCounter = ONE; loopCounter <= BORDER_WIDTH - ONE;
+			loopCounter++) {
+
+		state = GLCD_readData();
+		state = GLCD_readData();
+		if(state == HIGH_8BITS)
+		{
+			counter++;
+		}
+	}
+	if(counter == (BORDER_WIDTH - ONE))
+	{
+		RowCompleteTranform(*rowIndicator_Ptr, *upperPageIndicator_Ptr);
+	}
+
+#endif
+#if ROW_TRANSFORM== ON
+	uint8 loopCounter = ZERO;
+	uint8 state = ZERO;
+	uint8 rowCounter = ZERO;
+	uint8 counter[NUM_BITS_IN_BYTE] = { ZERO };
+
+	/* set the page address */
+	GLCD_sendCommand(PAGE_SETTING_ADDRESS + *upperPageIndicator_Ptr);
+	/* set the column address */
+	GLCD_sendCommand(
+	COLUMN_SETTING_ADDRESS + LEFT_BORDER + ONE);
+	for (loopCounter = ONE; loopCounter <= BORDER_WIDTH - ONE; loopCounter++) {
+
+		state = GLCD_readData();
+		state = GLCD_readData();
+		for (rowCounter = ZERO; rowCounter < NUM_BITS_IN_BYTE; rowCounter++) {
+			if (BIT_IS_SET(state, rowCounter)) {
+				counter[rowCounter]++;
+			}
+		}
+	}
+	for (rowCounter = NUM_BITS_IN_BYTE; rowCounter > ZERO; rowCounter--) {
+		if (counter[rowCounter - ONE] == (BORDER_WIDTH - ONE)) {
+			if (rowCounter - ONE == SEVEN && *upperPageIndicator_Ptr == SEVEN) {
+
+			} else {
+				RowCompleteTranform(rowCounter - ONE, *upperPageIndicator_Ptr);
+			}
+
+		}
+	}
+
+#endif
+
+}
+/*----------------------------------------------------------------------------------------------------
  [Function Name]:  RowCompleteTranform
- [Description]  :  This function is responsible for drawing the shape at the top of the game zone
+ [Description]  :  This function is responsible for checking
+ 	 	 	 	 	 	 the completion of the row or page according the configuration of ROW_TRANSFER
+ 	 	 	 	 	 	 (ROW_TRANSFER) is defined as ON, function will check on Row Completition
+ 	 	 	 	 	 	 (ROW_TRANSFER) is defined as OFF, function will check on Page completitio
  [Args]         :  uint8 rowIndicator
- this argument shall contains the address of the rowIndicator variable
- uint8 pageIndicator
- this argument shall contains the address of the current page
- uint8 columnIndicator
- this argument shall contains the address of the columnIndicator variable
+ 	 	 	 	 	 	 this argument shall contains the address of the rowIndicator variable
+                   uint8 pageIndicator
+ 	 	 	 	 	 	 this argument shall contains the address of the current page
  [Returns]      :  This function returns void
  ----------------------------------------------------------------------------------------------------*/
 
-void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
-		uint8 columnIndicator) {
+void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator) {
 #if ROW_TRANSFORM == ON
 	/* intialize local variables */
 	uint8 loopCounter = ZERO; /* this variable is responsible for looping counter */
@@ -319,7 +395,7 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 	uint8 lowerPagePart[BORDER_WIDTH] = { ZERO };
 	cli();
 
-	page = pageIndicator - ONE;
+	page = pageIndicator;
 
 	while (page >= ONE) {
 
@@ -338,7 +414,12 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 		}
 		/* set the column address */
 
-		GLCD_sendCommand(PAGE_SETTING_ADDRESS + page + ONE);
+		if (page + ONE == EIGHT) {
+			GLCD_sendCommand(PAGE_SETTING_ADDRESS + page);
+		} else {
+			GLCD_sendCommand(PAGE_SETTING_ADDRESS + page + ONE);
+		}
+
 		GLCD_sendCommand(
 		COLUMN_SETTING_ADDRESS + LEFT_BORDER + ONE);
 		for (loopCounter = ONE; loopCounter <= BORDER_WIDTH - ONE;
@@ -347,24 +428,30 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 			lowerPagePart[loopCounter] = GLCD_readData();
 			lowerPagePart[loopCounter] = GLCD_readData();
 		}
-		GLCD_sendCommand(PAGE_SETTING_ADDRESS + page + ONE);
-		GLCD_sendCommand(
-		COLUMN_SETTING_ADDRESS + LEFT_BORDER + ONE);
+		if (page + ONE == EIGHT) {
+			GLCD_sendCommand(PAGE_SETTING_ADDRESS + page);
+		} else {
+			GLCD_sendCommand(PAGE_SETTING_ADDRESS + page + ONE);
+			GLCD_sendCommand(
+			COLUMN_SETTING_ADDRESS + LEFT_BORDER + ONE);
+			/* displaying the new column state by ORing the new part with the remaining the old part*/
+			for (loopCounter = ONE; loopCounter <= BORDER_WIDTH - ONE;
+					loopCounter++) {
 
-		/* displaying the new column state by ORing the new part with the remaining the old part*/
-		for (loopCounter = ONE; loopCounter <= BORDER_WIDTH - ONE;
-				loopCounter++) {
+				upperRow = (upperPagePart[loopCounter] & 0x80)
+						>> LAST_ROW_IN_PAGE;
+				newColumn = ((lowerPagePart[loopCounter]
+						& (HIGH_8BITS >> (rowIndicator + ONE))) << ONE);
+				lowerPagePart[loopCounter] = (lowerPagePart[loopCounter]
+						& (HIGH_8BITS << (rowIndicator + ONE)));
+				GLCD_sendData(
+						(newColumn | lowerPagePart[loopCounter]) | upperRow);
 
-			upperRow = (upperPagePart[loopCounter] & 0x80) >> 7;
-			newColumn = ((lowerPagePart[loopCounter]
-					& (HIGH_8BITS >> (rowIndicator + ONE))) << ONE);
-			lowerPagePart[loopCounter] = (lowerPagePart[loopCounter]
-					& (HIGH_8BITS << (rowIndicator + ONE)));
-			GLCD_sendData((newColumn | lowerPagePart[loopCounter]) | upperRow);
-
+			}
 		}
+
 		page--;
-		rowIndicator = 7;
+		rowIndicator = LAST_ROW_IN_PAGE;
 	}
 
 #elif ROW_TRANSFORM == OFF
@@ -377,10 +464,10 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 	uint8 page = pageIndicator;
 	cli();
 
-	while(page>=ONE)
+	while(page>=ZERO)
 	{
 		/* set the page address */
-		GLCD_sendCommand(PAGE_SETTING_ADDRESS + page - ONE);
+		GLCD_sendCommand(PAGE_SETTING_ADDRESS + page);
 
 		/* set the column address */
 		GLCD_sendCommand(
@@ -390,7 +477,7 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 
 			state[loopCounter] = GLCD_readData();
 			state[loopCounter] = GLCD_readData();
-			if(page == ONE)
+			if(page == ZERO)
 			{
 				state[loopCounter] = state[loopCounter] & 0b11111110;
 			}
@@ -398,7 +485,14 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 		/* set the column address */
 		GLCD_sendCommand(
 		COLUMN_SETTING_ADDRESS + LEFT_BORDER + ONE);
-		GLCD_sendCommand(PAGE_SETTING_ADDRESS + page );
+		if(page+ONE == EIGHT)
+		{
+			GLCD_sendCommand(PAGE_SETTING_ADDRESS + page );
+		}
+		else
+		{
+			GLCD_sendCommand(PAGE_SETTING_ADDRESS + page + ONE);
+		}
 
 		/* displaying the new column state by ORing the new part with the remaining the old part*/
 		for (loopCounter = ONE; loopCounter <= BORDER_WIDTH - ONE; loopCounter++) {
@@ -420,8 +514,6 @@ void RowCompleteTranform(uint8 rowIndicator, uint8 pageIndicator,
 #endif
 
 }
-
-
 
 /*----------------------------------------------------------------------------------------------------
  [Function Name]:  LosingFunction
@@ -453,6 +545,4 @@ void LosingFunction(void) {
 
 	}
 }
-
-
 

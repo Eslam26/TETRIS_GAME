@@ -1,5 +1,5 @@
 /************************************************************************************************************************
- *  [FILE NAME]   :      <shapes.h>                                                                                       *
+ *  [FILE NAME]   :      <shapes.h>                                                                                     *
  *  [AUTHOR]      :      <Eslam EL-Naggar>                                                                              *
  *  [DATE CREATED]:      <JAN 26, 2020>                                                                                 *
  *  [Description} :      <Header files contains the shapes formation>                                                   *
@@ -40,7 +40,7 @@
 #define FIVE 5
 #define SIX 6
 #define SEVEN 7
-#define EIGHTH 8
+#define EIGHT 8
 #define NINE 9
 
 #define STARTED_ROW 1
@@ -48,7 +48,7 @@
 #define STARTED_UPPER_PAGE 0
 #define STARTED_LOWER_PAGE 1
 
-/*---------------------------------------FUNCTIONS_PROTOTYPES-----------------------------*/
+/*---------------------------------------FUNCTIONS PROTOTYPES-----------------------------*/
 void checkAfterMoving(uint8 *columnIndicator_Ptr);
 void DrawShape(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
 		uint8 *columnIndicator_Ptr, uint8 *lowerPageIndicator_Ptr,
@@ -61,8 +61,8 @@ void EraseShape(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
 void GenerateLocation(uint8 *shape_Ptr, uint8 *rowIndicator_Ptr,
 		uint8 *upperPageIndicator_Ptr, uint8 *lowerPageIndicator_Ptr,
 		uint8 *columnIndicator_Ptr);
-void RotateShape(uint8 * columnIndicator_Ptr);
-void NextShapeView(uint8 *shape_Ptr);
+void RotateShape(uint8 *columnIndicator_Ptr);
+uint8 NextShapeView(uint8 *shape_Ptr);
 
 /*------------------------------------------EXTERNAL VARIABLES----------------------------*/
 extern const uint8 shapes[NUM_SHAPES][SHAPE_WIDTH];
