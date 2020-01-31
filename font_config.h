@@ -10,7 +10,7 @@
 
 #define FontWidth 5
 
-char font[][5] =			/* Define char fonts array in column by row in flash memory */
+char font[][FontWidth] =			/* Define char fonts array in column by row in flash memory */
 {
  {0x00, 0x00, 0x00, 0x00, 0x00} // 20 (Space)
 ,{0x00, 0x00, 0x5f, 0x00, 0x00} // 21 !
